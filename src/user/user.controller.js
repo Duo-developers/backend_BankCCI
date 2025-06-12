@@ -89,3 +89,68 @@ export const getUserById = async (req, res) => {
         });
     }
 }
+
+export const updateUser = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const { password, dpi, ...dataN } = req.body;
+
+        const user = await User.findById(uid);
+        if (!user || !user.status) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found or inactive'
+            });
+        }
+
+        user = await User.findByIdAndUpdate(uid, dataN, { new: true })
+        return res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error updating user',
+            error: err.message
+        });
+    }
+}
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const user = await User.findById(uid);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found or inactive'
+            });
+        }
+
+        user = await User.findByIdAndUpdate(uid, { status: false }, { new: true });
+
+        return res.status(200).json({
+            success: true,
+            message: 'User deactivated successfully',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error deactivating user',
+            error: err.message
+        });
+    }
+}
