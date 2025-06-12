@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import apiLimiter from "../src/middlewares/rate-limit-validator.js";
+import productRoutes from "../src/product/product.routes.js";
 
 const middlewares = (app) => {
     app.use(express.urlencoded({ extended: false }));
@@ -13,8 +14,8 @@ const middlewares = (app) => {
 };
 
 const routes = (app) => {
-
-}
+    app.use("/cci/v1/product", productRoutes);
+};
 
 const connectDB = async () => {
     try {
