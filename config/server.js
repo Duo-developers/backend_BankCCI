@@ -3,6 +3,9 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import apiLimiter from "../src/middlewares/rate-limit-validator.js";
+import authRoutes from "../src/auth/auth.routes.js";
+import userRoutes from "../src/user/user.routes.js";
+import defaultData from "./default-data.js";
 
 const middlewares = (app) => {
     app.use(express.urlencoded({ extended: false }));
@@ -13,12 +16,14 @@ const middlewares = (app) => {
 };
 
 const routes = (app) => {
-
+    app.use("/cci/v1/auth", authRoutes)
+    app.use("/cci/v1/user", userRoutes);
 }
 
 const connectDB = async () => {
     try {
         await dbConnection();
+        await defaultData();
     } catch (error) {
         console.error("Database connection failed:", error);
         process.exit(1); 

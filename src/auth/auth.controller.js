@@ -2,7 +2,7 @@ import User from '../user/user.model.js';
 import { generateJWT } from '../helpers/generate-jwt.js';
 import { verify } from 'argon2';
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, username, password } = req.body;
 
@@ -41,5 +41,3 @@ const login = async (req, res) => {
         });
     }
 }
-
-export default login;

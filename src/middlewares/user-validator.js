@@ -1,8 +1,8 @@
 import { body, param } from "express-validator";
-import { validateField } from "./validate-fileds";
-import { handleErrors } from "./handle-errors";
-import { validateJWT } from "./validate-jwt";
-import { hasRoles } from "./validate-roles";
+import { validateField } from "./validate-fileds.js";
+import { handleErrors } from "./handle-errors.js";
+import { validateJWT } from "./validate-jwt.js";
+import { hasRoles } from "./validate-roles.js";
 
 export const loginValidator = [
     body("email").optional().isEmail().withMessage("Invalid email format"),

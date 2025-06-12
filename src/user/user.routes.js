@@ -11,3 +11,5 @@ router.put('/:uid', updateUserValidator, updateUser);
 router.put('/me', updateUserValidator, updateMe);
 router.patch('/password', updatePasswordValidator,updatePassword);
 router.delete('/:uid', deleteUserValidator, deleteUser);
+
+export default router;
