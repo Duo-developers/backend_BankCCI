@@ -95,7 +95,7 @@ export const updateUser = async (req, res) => {
         const { uid } = req.params;
         const { password, dpi, ...dataN } = req.body;
 
-        const user = await User.findById(uid);
+        let user = await User.findById(uid);
         if (!user || !user.status) {
             return res.status(404).json({
                 success: false,
@@ -154,3 +154,82 @@ export const deleteUser = async (req, res) => {
         });
     }
 }
+
+export const updatePassword = async (req, res) => {
+    try {
+        const { usuario } = req
+        const { currentPassword } = req.body
+        const { newPassword } = req.body
+
+        const oldPassword = await verify(usuario.password, currentPassword)
+
+
+        if(!oldPassword){
+            return res.status(400).json({
+                success: false,
+                msg: "Old password does not match"
+            })
+        }
+
+        const user = await User.findById(usuario._id)
+
+        const matchOldAndNewPassword = await verify(user.password, newPassword)
+
+        if(matchOldAndNewPassword){
+            return res.status(400).json({
+                success: false,
+                msg: "The new password cannot be the same as the previous one"
+            })
+        }
+
+        const encryptedPassword = await hash(newPassword)
+
+        await User.findByIdAndUpdate(usuario._id, {password: encryptedPassword}, {new: true})
+
+        return res.status(200).json({
+            success: true,
+            msg: "Updated password",
+        })
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error updating password',
+            error: err.message
+        });
+    }
+}
+
+export const updateMe = async (req, res) => {
+    try {
+        const { usuario } = req;
+        const { password, dpi, ...dataN } = req.body;
+
+        const userFound = await User.findById(usuario._id);
+        if (!userFound || !userFound.status) {
+            return res.status(404).json({
+                success: false,
+                msg: "User not found or inactive"
+            });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(usuario._id, dataN, { new: true });
+
+        return res.status(200).json({
+            success: true,
+            msg: "User updated successfully",
+            user: {
+                id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email
+            }
+        });
+
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            msg: "Error updating user",
+            error: err.message
+        });
+    }
+};
