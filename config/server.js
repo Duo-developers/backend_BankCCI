@@ -7,6 +7,7 @@ import productRoutes from "../src/product/product.routes.js";
 import authRoutes from "../src/auth/auth.routes.js";
 import userRoutes from "../src/user/user.routes.js";
 import accountRoutes from "../src/account/account.routes.js";
+import transactionRoutes from "../src/transactions/transaction.routes.js";
 import defaultData from "./default-data.js";
 
 
@@ -23,6 +24,7 @@ const routes = (app) => {
     app.use("/cci/v1/auth", authRoutes)
     app.use("/cci/v1/user", userRoutes);
     app.use("/cci/v1/account", accountRoutes);
+    app.use("/cci/v1/transaction", transactionRoutes);
 }
 
 const connectDB = async () => {
