@@ -14,7 +14,7 @@ export const login = async (req, res) => {
             });
         }
 
-        const isPasswordValid = await verify(password);
+        const isPasswordValid = await verify(user.password, password);
         if (!isPasswordValid) {
             return res.status(400).json({
                 success: false,

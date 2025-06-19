@@ -3,9 +3,13 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import apiLimiter from "../src/middlewares/rate-limit-validator.js";
+import productRoutes from "../src/product/product.routes.js";
 import authRoutes from "../src/auth/auth.routes.js";
 import userRoutes from "../src/user/user.routes.js";
+import accountRoutes from "../src/account/account.routes.js";
+import transactionRoutes from "../src/transactions/transaction.routes.js";
 import defaultData from "./default-data.js";
+
 
 const middlewares = (app) => {
     app.use(express.urlencoded({ extended: false }));
@@ -16,8 +20,11 @@ const middlewares = (app) => {
 };
 
 const routes = (app) => {
+    app.use("/cci/v1/product", productRoutes);
     app.use("/cci/v1/auth", authRoutes)
     app.use("/cci/v1/user", userRoutes);
+    app.use("/cci/v1/account", accountRoutes);
+    app.use("/cci/v1/transaction", transactionRoutes);
 }
 
 const connectDB = async () => {
