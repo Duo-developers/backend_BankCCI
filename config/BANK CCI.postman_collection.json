@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "0056f934-4ed2-41e8-af48-8ee682d99404",
+		"name": "BANK CCI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37780367"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"admin@gmail.com\",\r\n  \"password\": \"ADMINB\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Nuevo Usuario",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTMxNTQsImV4cCI6MTc1MDI5Njc1NH0.4TLtFBIf7fXRs6HhZG0yV2U7Wg147Usx3Q7VthgfjZE",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"cliente3\",\r\n  \"password\": \"Cliente3@123\",\r\n  \"name\": \"Cliente Ejemplo3\",\r\n  \"dpi\": \"1234567890126\",\r\n  \"address\": \"123 Calle Principal, Ciudad\",\r\n  \"phone\": \"12345670\",\r\n  \"email\": \"cliente03@ejemplo.com\",\r\n  \"workName\": \"Empresa Ejemplo 3 \",\r\n  \"monthlyIncome\": 3000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar todos los usuarios",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTMxNTQsImV4cCI6MTc1MDI5Njc1NH0.4TLtFBIf7fXRs6HhZG0yV2U7Wg147Usx3Q7VthgfjZE",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar contraseña",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTMxNTQsImV4cCI6MTc1MDI5Njc1NH0.4TLtFBIf7fXRs6HhZG0yV2U7Wg147Usx3Q7VthgfjZE",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"currentPassword\": \"ADMINB\",\r\n  \"newPassword\": \"ADMINA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user/password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar Usuario",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTMxNTQsImV4cCI6MTc1MDI5Njc1NH0.4TLtFBIf7fXRs6HhZG0yV2U7Wg147Usx3Q7VthgfjZE",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Updated Name\",\r\n  \"address\": \"New Address\",\r\n  \"phone\": \"87654321\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user/68534f147d4b2de36db02071",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user",
+						"68534f147d4b2de36db02071"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener Usuario por ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTMxNTQsImV4cCI6MTc1MDI5Njc1NH0.4TLtFBIf7fXRs6HhZG0yV2U7Wg147Usx3Q7VthgfjZE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user/68534f147d4b2de36db02071",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user",
+						"68534f147d4b2de36db02071"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Desactivar Usuario",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODUzNDk2N2Q2MDAzNTRlMWY5N2Q0NjYiLCJpYXQiOjE3NTAyOTQwMjMsImV4cCI6MTc1MDI5NzYyM30.wdH2cMHkr4hRi9fjKECvrq8tfnBX_e3n72eXOOYHifM",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3001/cci/v1/user/68534f147d4b2de36db02071",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"cci",
+						"v1",
+						"user",
+						"68534f147d4b2de36db02071"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

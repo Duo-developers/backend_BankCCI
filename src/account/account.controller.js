@@ -1,5 +1,6 @@
 import Account from './account.model.js';
 import { generateAccountNumber } from '../helpers/generate-account-number.js';
+import User from '../user/user.model.js';
 
 export const getAccounts = async (req, res) => {
     try {
@@ -12,27 +13,20 @@ export const getAccounts = async (req, res) => {
 
 export const registerAccount = async (req, res) => {
     const data = req.body;
+    const user = await User.findById(data.user);
+
+    if(!user){
+        return res.status(404).json({ message: 'Usuario no encontrado', error: data.user });
+    }
     try {
-        data.accountNumber = await generateAccountNumber();
+        data.numberAccount = await generateAccountNumber();
         const newAccount = new Account(data);
         await newAccount.save();
+        user.accounts.push(newAccount._id);
+        await user.save();
         res.status(201).json(newAccount);
     } catch (error) {
         res.status(500).json({ message: 'Error al registrar la cuenta', error });
-    }
-}
-
-export const updateAccount = async (req, res) => {
-    const { id } = req.params;
-    const data = req.body;
-    try {
-        const updatedAccount = await Account.findByIdAndUpdate(id, data, { new: true });
-        if (!updatedAccount) {
-            return res.status(404).json({ message: 'No se encontro la cuenta', error: id });
-        }
-        res.status(200).json(updatedAccount);
-    } catch (error) {
-        res.status(500).json({ message: 'Error al actualizar la cuenta', error });
     }
 }
 
