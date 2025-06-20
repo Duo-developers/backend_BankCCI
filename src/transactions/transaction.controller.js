@@ -33,7 +33,7 @@ export const makeDeposit = async (req, res) => {
         const account = await Account.findById(toAccountId);
         if (!account) return res.status(404).json({ success: false, message: "Account not found" });
 
-        account.balance += amount;
+        account.balance = Number((account.balance + Number(amount)).toFixed(2));
         await account.save();
 
         const transaction = await Transaction.create({
