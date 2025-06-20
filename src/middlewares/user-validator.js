@@ -63,7 +63,7 @@ export const getUserByIdValidator = [
 
 export const updateUserValidator = [
     validateJWT,
-    hasRoles("CLIENT_ROLE", "ADMIN_ROLE"),
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
     param("uid").isMongoId().withMessage("Invalid user ID format"),
     body("username").optional().notEmpty().withMessage("Username cannot be empty"),
     body("name").optional().notEmpty().withMessage("Name cannot be empty"),
@@ -89,7 +89,7 @@ export const deleteUserValidator = [
 
 export const updatePasswordValidator = [
     validateJWT,
-    hasRoles("CLIENT_ROLE", "ADMIN_ROLE"),
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
     body("currentPassword")
         .exists()
         .withMessage("Current password is required")
