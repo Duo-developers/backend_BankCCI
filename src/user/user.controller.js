@@ -126,15 +126,15 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const { uid } = req.params;
-        const user = await User.findById(uid);
-        if (!user) {
+        const userFound = await User.findById(uid);
+        if (!userFound) {
             return res.status(404).json({
                 success: false,
                 message: 'User not found or inactive'
             });
         }
 
-        user = await User.findByIdAndUpdate(uid, { status: false }, { new: true });
+        const user = await User.findByIdAndUpdate(uid, { status: false }, { new: true });
 
         return res.status(200).json({
             success: true,
@@ -154,7 +154,6 @@ export const deleteUser = async (req, res) => {
         });
     }
 }
-
 export const updatePassword = async (req, res) => {
     try {
         const { usuario } = req
