@@ -8,7 +8,6 @@ export const registerAccountValidator = [
     validateJWT,
     hasRoles('ADMIN_ROLE'),
     body('user').isMongoId().withMessage('El id del usuario no es válido'),
-    //body('numberAccount').notEmpty().withMessage('El número de cuenta es obligatorio'),
     body('typeAccount')
         .notEmpty()
         .withMessage('El tipo de cuenta es obligatorio')

@@ -17,8 +17,6 @@ export const loginValidator = [
 ]
 
 export const createUserValidator = [
-    validateJWT,
-    hasRoles("ADMIN_ROLE"),
     body("username").notEmpty().withMessage("Username is required"),
     body("password").notEmpty().withMessage("Password is required"),
     body("password").isStrongPassword({
@@ -107,3 +105,10 @@ export const updatePasswordValidator = [
     validateField,
     handleErrors
 ]
+
+export const getUserLoggedValidator = [
+    validateJWT,
+    hasRoles('USER_ROLE', 'ADMIN_ROLE'), 
+    validateField,
+    handleErrors
+];

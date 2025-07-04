@@ -232,3 +232,31 @@ export const updateMe = async (req, res) => {
         });
     }
 };
+
+export const getUserLogged = async (req, res) => {
+    try {
+        const { usuario } = req;
+
+        const user = await User.findById(usuario._id).select('-password -__v');
+
+        if (!user || !user.status) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado o inactivo.'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user
+        });
+
+    } catch (error) {
+        console.error('Error al obtener el usuario logueado:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor al obtener los datos del usuario.',
+            error: error.message
+        });
+    }
+};
