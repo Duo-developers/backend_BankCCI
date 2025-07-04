@@ -39,8 +39,8 @@ const defaultData = async () => {
 
         if(!regularUser) {
             const email = "usuario@gmail.com";
-            const password = "Usuario123";
-            const username = "usuario1";
+            const password = "USUARIO1";
+            const username = "USUARIO1";
 
             const hashedPassword = await hash(password)
 
