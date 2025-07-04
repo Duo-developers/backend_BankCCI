@@ -28,11 +28,43 @@ const defaultData = async () => {
             await newAdmin.save();
 
             console.log("Default admin user created successfully.");
-        }else {
+        } else {
             console.log("Admin user already exists.");
-        } 
-    }   catch (err) {
-        return console.error("Error creating default admin user:", err);
+        }
+        
+        const regularUser = await User.findOne({ 
+            role: "USER_ROLE",
+            username: "usuario1" 
+        });
+
+        if(!regularUser) {
+            const email = "usuario@gmail.com";
+            const password = "Usuario123";
+            const username = "usuario1";
+
+            const hashedPassword = await hash(password)
+
+            const newUser = new User({
+                username,
+                password: hashedPassword,
+                role: "USER_ROLE",
+                name: "Usuario Normal",
+                dpi: "9876543210123",
+                address: "456 User St",
+                phone: "9876543210",
+                email,
+                workName: "Empresa XYZ",
+                monthlyIncome: 5000 
+            });
+
+            await newUser.save();
+
+            console.log("Default regular user created successfully.");
+        } else {
+            console.log("Regular user already exists.");
+        }
+    } catch (err) {
+        return console.error("Error creating default users:", err);
     }
 }
 
