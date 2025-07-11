@@ -13,6 +13,22 @@ export const createUser = async (req, res) => {
             });
         }
 
+        const existingUsername = await User.findOne({ username: data.username });
+        if (existingUsername) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username already taken'
+            });
+        }
+
+        const existingDPI = await User.findOne({ dpi: data.dpi });
+        if (existingDPI) {
+            return res.status(400).json({
+                success: false,
+                message: 'DPI already registered'
+            });
+        }
+
         data.password = await hash(data.password);
 
         const newUser = new User(data);
@@ -26,9 +42,8 @@ export const createUser = async (req, res) => {
                 name: newUser.name,
                 email: newUser.email
             }
-
         });
-    }catch (err) {
+    } catch (err) {
         return res.status(500).json({
             success: false,
             message: 'Error creating user',
@@ -103,15 +118,22 @@ export const updateUser = async (req, res) => {
             });
         }
 
-        user = await User.findByIdAndUpdate(uid, dataN, { new: true })
+        if (dataN.username && dataN.username !== user.username) {
+            const existingUsername = await User.findOne({ username: dataN.username });
+            if (existingUsername) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Username already taken'
+                });
+            }
+        }
+
+        user = await User.findByIdAndUpdate(uid, dataN, { new: true }).select('-password -__v');
+        
         return res.status(200).json({
             success: true,
             message: 'User updated successfully',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email
-            }
+            user
         });
 
     } catch (err) {
@@ -134,16 +156,12 @@ export const deleteUser = async (req, res) => {
             });
         }
 
-        const user = await User.findByIdAndUpdate(uid, { status: false }, { new: true });
+        const user = await User.findByIdAndUpdate(uid, { status: false }, { new: true }).select('-password -__v');
 
         return res.status(200).json({
             success: true,
             message: 'User deactivated successfully',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email
-            }
+            user
         });
 
     } catch (err) {
@@ -154,41 +172,35 @@ export const deleteUser = async (req, res) => {
         });
     }
 }
+
 export const updatePassword = async (req, res) => {
     try {
-        const { usuario } = req
-        const { currentPassword } = req.body
-        const { newPassword } = req.body
+        const { usuario } = req;
+        const { currentPassword, newPassword } = req.body;
 
-        const oldPassword = await verify(usuario.password, currentPassword)
-
-
-        if(!oldPassword){
+        const isPasswordValid = await verify(usuario.password, currentPassword);
+        if (!isPasswordValid) {
             return res.status(400).json({
                 success: false,
-                msg: "Old password does not match"
-            })
+                message: 'Current password is incorrect'
+            });
         }
 
-        const user = await User.findById(usuario._id)
-
-        const matchOldAndNewPassword = await verify(user.password, newPassword)
-
-        if(matchOldAndNewPassword){
+        const isSamePassword = await verify(usuario.password, newPassword);
+        if (isSamePassword) {
             return res.status(400).json({
                 success: false,
-                msg: "The new password cannot be the same as the previous one"
-            })
+                message: 'New password cannot be the same as the current password'
+            });
         }
 
-        const encryptedPassword = await hash(newPassword)
-
-        await User.findByIdAndUpdate(usuario._id, {password: encryptedPassword}, {new: true})
+        const encryptedPassword = await hash(newPassword);
+        await User.findByIdAndUpdate(usuario._id, { password: encryptedPassword }, { new: true });
 
         return res.status(200).json({
             success: true,
-            msg: "Updated password",
-        })
+            message: 'Password updated successfully'
+        });
 
     } catch (err) {
         return res.status(500).json({
@@ -202,32 +214,38 @@ export const updatePassword = async (req, res) => {
 export const updateMe = async (req, res) => {
     try {
         const { usuario } = req;
-        const { password, dpi, ...dataN } = req.body;
+        const { password, dpi, email, ...dataN } = req.body;
 
         const userFound = await User.findById(usuario._id);
         if (!userFound || !userFound.status) {
             return res.status(404).json({
                 success: false,
-                msg: "User not found or inactive"
+                message: 'User not found or inactive'
             });
         }
 
-        const updatedUser = await User.findByIdAndUpdate(usuario._id, dataN, { new: true });
+        if (dataN.username && dataN.username !== userFound.username) {
+            const existingUsername = await User.findOne({ username: dataN.username });
+            if (existingUsername) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Username already taken'
+                });
+            }
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(usuario._id, dataN, { new: true }).select('-password -__v');
 
         return res.status(200).json({
             success: true,
-            msg: "User updated successfully",
-            user: {
-                id: updatedUser._id,
-                name: updatedUser.name,
-                email: updatedUser.email
-            }
+            message: 'User updated successfully',
+            user: updatedUser
         });
 
     } catch (err) {
         return res.status(500).json({
             success: false,
-            msg: "Error updating user",
+            message: 'Error updating user',
             error: err.message
         });
     }
@@ -242,7 +260,7 @@ export const getUserLogged = async (req, res) => {
         if (!user || !user.status) {
             return res.status(404).json({
                 success: false,
-                message: 'Usuario no encontrado o inactivo.'
+                message: 'User not found or inactive'
             });
         }
 
@@ -252,10 +270,10 @@ export const getUserLogged = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error al obtener el usuario logueado:', error);
+        console.error('Error fetching logged user:', error);
         return res.status(500).json({
             success: false,
-            message: 'Error interno del servidor al obtener los datos del usuario.',
+            message: 'Internal server error while fetching user data',
             error: error.message
         });
     }

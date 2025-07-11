@@ -114,3 +114,16 @@ export const getUserLoggedValidator = [
     validateField,
     handleErrors
 ];
+
+export const updateMeValidator = [
+    validateJWT,
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
+    body("username").optional().notEmpty().withMessage("Username cannot be empty"),
+    body("name").optional().notEmpty().withMessage("Name cannot be empty"),
+    body("address").optional().notEmpty().withMessage("Address cannot be empty"),
+    body("phone").optional().notEmpty().withMessage("Phone cannot be empty"),
+    body("workName").optional().notEmpty().withMessage("Work name cannot be empty"),
+    body("monthlyIncome").optional().isNumeric().withMessage("Monthly income must be a number"),
+    validateField,
+    handleErrors
+];
