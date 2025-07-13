@@ -12,6 +12,7 @@ import transactionRoutes from "../src/transactions/transaction.routes.js";
 import defaultData from "./default-data.js";
 import { createDefaultProducts } from "./default-products.js"; 
 import { createDefaultAccounts } from "./default-accounts.js"; 
+import currencyRoutes from "../src/currency/currency.routes.js"; 
 
 
 
@@ -36,6 +37,7 @@ const routes = (app) => {
     app.use("/cci/v1/user", userRoutes);
     app.use("/cci/v1/account", accountRoutes);
     app.use("/cci/v1/transaction", transactionRoutes);
+    app.use("/cci/v1/currency", currencyRoutes);
 }
 
 const connectDB = async () => {

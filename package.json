@@ -22,6 +22,7 @@
   "homepage": "https://github.com/Duo-developers/backend_BankCCI#readme",
   "dependencies": {
     "argon2": "^0.43.0",
+    "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
