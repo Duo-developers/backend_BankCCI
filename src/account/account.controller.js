@@ -4,10 +4,31 @@ import User from '../user/user.model.js';
 
 export const getAccounts = async (req, res) => {
     try {
+        const userId = req.usuario._id; 
+        
+        if (!userId) {
+            return res.status(401).json({ message: 'Usuario no autenticado' });
+        }
+        
+        // La búsqueda ahora filtrará correctamente por el ID del usuario logueado
+        const accounts = await Account.find({ 
+            user: userId, 
+            status: true 
+        }).populate('user', 'name email');
+        
+        res.status(200).json(accounts);
+    } catch (error) {
+        console.error('Error al obtener cuentas del usuario:', error);
+        res.status(500).json({ message: 'Error al obtener las cuentas', error });
+    }
+}
+
+export const getAllAccounts = async (req, res) => {
+    try {
         const accounts = await Account.find({ status: true }).populate('user', 'name email');
         res.status(200).json(accounts);
     } catch (error) {
-        res.status(500).json({ message: 'Error al obtener las cuentas', error });
+        res.status(500).json({ message: 'Error al obtener todas las cuentas', error });
     }
 }
 

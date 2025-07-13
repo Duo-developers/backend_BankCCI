@@ -55,3 +55,12 @@ export const makeTransferValidator = [
     validateField,
     handleErrors
 ];
+
+export const buyProductValidator = [
+    validateJWT,
+    hasRoles("USER_ROLE"),
+    body("productId", "El ID del producto es obligatorio").notEmpty().isMongoId(),
+    body("fromAccountId", "El ID de la cuenta es obligatorio").notEmpty().isMongoId(),
+    validateField,
+    handleErrors
+];

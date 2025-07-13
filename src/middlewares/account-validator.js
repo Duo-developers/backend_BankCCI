@@ -24,7 +24,14 @@ export const registerAccountValidator = [
 
 export const getAccountsValidator = [
     validateJWT,
-    hasRoles('ADMIN_ROLE'),
+    hasRoles('ADMIN_ROLE' , 'USER_ROLE'),
+    validateField,
+    handleErrors
+];
+
+export const getMyAccountsValidator = [
+    validateJWT,
+    hasRoles('ADMIN_ROLE', 'USER_ROLE'),
     validateField,
     handleErrors
 ];

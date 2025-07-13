@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 const transactionSchema = new Schema({
     type: {
         type: String,
-        enum: ['DEPOSIT', 'IN_TRANSFER', 'OUT_TRANSFER', 'WITHDRAWAL'],
+        enum: ['DEPOSIT', 'IN_TRANSFER', 'OUT_TRANSFER', 'WITHDRAWAL', 'PURCHASE'],
         required: true
     },
     amount: {

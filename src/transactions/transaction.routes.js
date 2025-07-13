@@ -5,7 +5,8 @@ import {
     modifyDepositAmount,
     revertDeposit,
     getAccountSummary,
-    makeTransfer
+    makeTransfer,
+    buyProduct 
 } from "./transaction.controller.js";
 import {
     makeDepositValidator,
@@ -13,7 +14,8 @@ import {
     revertDepositValidator,
     makeTransferValidator,
     getAccountSummaryValidator,
-    listAccountsByTransactionCountValidator
+    listAccountsByTransactionCountValidator,
+    buyProductValidator 
 } from "../middlewares/transaction-validator.js";
 
 const router = Router();
@@ -29,5 +31,8 @@ router.post("/deposit/revert",revertDepositValidator,revertDeposit);
 router.get("/summary/:accountId",getAccountSummaryValidator,getAccountSummary);
 
 router.post("/transfer",makeTransferValidator,makeTransfer);
+
+router.post("/purchase", buyProductValidator, buyProduct);
+
 
 export default router;

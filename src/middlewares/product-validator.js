@@ -6,7 +6,7 @@ import { hasRoles } from './validate-roles.js';
 
 export const getProductByIdValidator = [
     validateJWT,
-    hasRoles('ADMIN_ROLE'),
+    hasRoles('ADMIN_ROLE', 'USER_ROLE'),
     param('id', 'El id del producto es obligatorio').notEmpty().isMongoId(),
     param('id', 'El id del producto no es valido').isMongoId(),
     validateField,

@@ -10,6 +10,9 @@ import userRoutes from "../src/user/user.routes.js";
 import accountRoutes from "../src/account/account.routes.js";
 import transactionRoutes from "../src/transactions/transaction.routes.js";
 import defaultData from "./default-data.js";
+import { createDefaultProducts } from "./default-products.js"; 
+import { createDefaultAccounts } from "./default-accounts.js"; 
+
 
 
 const middlewares = (app) => {
@@ -39,6 +42,8 @@ const connectDB = async () => {
     try {
         await dbConnection();
         await defaultData();
+        await createDefaultProducts();
+        await createDefaultAccounts();
     } catch (error) {
         console.error("Database connection failed:", error);
         process.exit(1); 

@@ -34,7 +34,7 @@ const defaultData = async () => {
         
         const regularUser = await User.findOne({ 
             role: "USER_ROLE",
-            username: "usuario1" 
+            username: "USUARIO1" 
         });
 
         if(!regularUser) {

@@ -1,5 +1,6 @@
 import Transaction from './transaction.model.js';
 import Account from '../account/account.model.js';
+import Product from '../product/product.model.js';
 import mongoose from 'mongoose';
 
 export const listAccountsByTransactionCount = async (req, res) => {
@@ -176,3 +177,47 @@ export const makeTransfer = async (req, res) => {
     }
 }
 
+export const buyProduct = async (req, res) => {
+    try {
+        const { productId, fromAccountId } = req.body;
+        const user = req.usuario;
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Producto no encontrado" });
+        }
+
+        const fromAccount = await Account.findById(fromAccountId);
+        if (!fromAccount) {
+            return res.status(404).json({ success: false, message: "Cuenta de origen no encontrada" });
+        }
+
+        if (fromAccount.user.toString() !== user._id.toString()) {
+            return res.status(403).json({ success: false, message: "No tienes permiso para usar esta cuenta" });
+        }
+        if (product.stock <= 0) {
+            return res.status(400).json({ success: false, message: "Producto agotado" });
+        }
+        if (fromAccount.balance < product.price) {
+            return res.status(400).json({ success: false, message: "Fondos insuficientes" });
+        }
+
+        fromAccount.balance -= product.price;
+        product.stock -= 1;
+
+        await fromAccount.save();
+        await product.save();
+
+        const transaction = await Transaction.create({
+            type: 'PURCHASE',
+            amount: product.price,
+            fromAccount: fromAccountId,
+            performedBy: user._id
+        });
+
+        res.json({ success: true, message: "Compra realizada con éxito", transaction });
+
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+};
