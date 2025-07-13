@@ -127,3 +127,27 @@ export const updateMeValidator = [
     validateField,
     handleErrors
 ];
+
+export const addFavoriteValidator = [
+    validateJWT,
+    hasRoles('USER_ROLE'),
+    body('accountId', 'El ID de la cuenta es obligatorio').notEmpty().isMongoId(),
+    body('alias', 'El alias debe ser texto').optional().isString(),
+    validateField,
+    handleErrors
+];
+
+export const getFavoritesValidator = [
+    validateJWT,
+    hasRoles('USER_ROLE'),
+    validateField,
+    handleErrors
+];
+
+export const removeFavoriteValidator = [
+    validateJWT,
+    hasRoles('USER_ROLE'),
+    param('accountId', 'El ID de la cuenta en la URL es inválido').isMongoId(),
+    validateField,
+    handleErrors
+];

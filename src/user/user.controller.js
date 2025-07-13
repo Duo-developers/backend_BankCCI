@@ -1,5 +1,7 @@
 import User from './user.model.js';
 import { hash, verify } from 'argon2';
+import Account from '../account/account.model.js';
+
 
 export const createUser = async (req, res) => {
     try {
@@ -278,3 +280,69 @@ export const getUserLogged = async (req, res) => {
         });
     }
 };
+
+export const addFavorite = async (req, res) => {
+    try {
+        const { accountId, alias } = req.body;
+        const user = req.usuario;
+
+        const accountExists = await Account.findById(accountId);
+        if (!accountExists) {
+            return res.status(404).json({ success: false, message: "La cuenta que intentas agregar no existe." });
+        }
+
+        if (accountExists.user.toString() === user._id.toString()) {
+            return res.status(400).json({ success: false, message: "No puedes agregarte a ti mismo como favorito." });
+        }
+
+        const isAlreadyFavorite = user.favorites.some(fav => fav.account.toString() === accountId);
+        if (isAlreadyFavorite) {
+            return res.status(400).json({ success: false, message: "Esta cuenta ya está en tus favoritos." });
+        }
+
+        user.favorites.push({ account: accountId, alias: alias || accountExists.typeAccount });
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Cuenta agregada a favoritos con éxito.", favorites: user.favorites });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Error al agregar favorito.", error: err.message });
+    }
+};
+
+export const getFavorites = async (req, res) => {
+    try {
+        const user = await User.findById(req.usuario._id)
+            .populate({
+                path: 'favorites.account',
+                select: 'numberAccount typeAccount user', 
+                populate: {
+                    path: 'user',
+                    select: 'name username' 
+                }
+            })
+            .select('favorites');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Usuario no encontrado" });
+        }
+
+        res.status(200).json({ success: true, favorites: user.favorites });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Error al obtener favoritos.", error: err.message });
+    }
+};
+
+export const removeFavorite = async (req, res) => {
+    try {
+        const { accountId } = req.params; 
+        const user = req.usuario;
+
+        user.favorites = user.favorites.filter(fav => fav.account.toString() !== accountId);
+        await user.save();
+
+        res.status(200).json({ success: true, message: "Favorito eliminado con éxito." });
+    } catch (err) {
+        res.status(500).json({ success: false, message: "Error al eliminar favorito.", error: err.message });
+    }
+};
+

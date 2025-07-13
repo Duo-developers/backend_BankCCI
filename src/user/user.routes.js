@@ -7,7 +7,10 @@ import {
     updateUserValidator, 
     updatePasswordValidator, 
     getUserLoggedValidator, 
-    updateMeValidator
+    updateMeValidator,
+    addFavoriteValidator,
+    getFavoritesValidator,
+    removeFavoriteValidator
 } from '../middlewares/user-validator.js';
 import { 
     createUser, 
@@ -17,10 +20,17 @@ import {
     updateUser, 
     updateMe, 
     updatePassword, 
-    getUserLogged 
+    getUserLogged,
+    addFavorite,
+    getFavorites,
+    removeFavorite
 } from './user.controller.js';
 
 const router = Router();
+
+router.post('/me/favorites', addFavoriteValidator, addFavorite);
+router.get('/me/favorites', getFavoritesValidator, getFavorites);
+router.delete('/me/favorites/:accountId', removeFavoriteValidator, removeFavorite);
 
 router.get('/me/information', getUserLoggedValidator, getUserLogged);
 router.put('/me', updateMeValidator, updateMe);
