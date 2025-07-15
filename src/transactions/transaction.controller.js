@@ -30,8 +30,8 @@ export const listAccountsByTransactionCount = async (req, res) => {
 
 export const makeDeposit = async (req, res) => {
     try {
-        const { toAccountId, amount } = req.body;
-        const account = await Account.findById(toAccountId);
+        const { toNumberAccount, amount } = req.body;
+        const account = await Account.findOne({ numberAccount: toNumberAccount });
         if (!account) return res.status(404).json({ success: false, message: "Account not found" });
 
         account.balance = Number((account.balance + Number(amount)).toFixed(2));
@@ -40,7 +40,7 @@ export const makeDeposit = async (req, res) => {
         const transaction = await Transaction.create({
             type: 'DEPOSIT',
             amount,
-            toAccount: toAccountId,
+            toAccount: account._id,
             performedBy: req.usuario._id
         });
 
@@ -102,12 +102,12 @@ export const revertDeposit = async (req, res) => {
 
 export const getAccountSummary = async (req, res) => {
     try {
-        const { accountId } = req.params;
-        const account = await Account.findById(accountId);
+        const { numberAccount } = req.params;
+        const account = await Account.findOne({ numberAccount });
         if (!account) return res.status(404).json({ success: false, message: "Account not found" });
 
         const transactions = await Transaction.find({
-            $or: [{ fromAccount: accountId }, { toAccount: accountId }]
+            $or: [{ fromAccount: account._id }, { toAccount: account._id }]
         }).sort({ createdAt: -1 });
 
         res.json({ success: true, balance: account.balance, transactions });
@@ -118,15 +118,15 @@ export const getAccountSummary = async (req, res) => {
 
 export const makeTransfer = async (req, res) => {
     try {
-        const { fromAccountId, toAccountId, amount } = req.body;
-        if (fromAccountId === toAccountId)
+        const { fromNumberAccount, toNumberAccount, amount } = req.body;
+        if (fromNumberAccount === toNumberAccount)
             return res.status(400).json({ success: false, message: "Cannot transfer to the same account" });
 
         if (amount > 2000)
             return res.status(400).json({ success: false, message: "Cannot transfer more than Q2000 per transaction" });
 
-        const fromAccount = await Account.findById(fromAccountId);
-        const toAccount = await Account.findById(toAccountId);
+        const fromAccount = await Account.findOne({ numberAccount: fromNumberAccount });
+        const toAccount = await Account.findOne({ numberAccount: toNumberAccount });
 
         if (!fromAccount || !toAccount)
             return res.status(404).json({ success: false, message: "Account not found" });
@@ -136,7 +136,7 @@ export const makeTransfer = async (req, res) => {
         const totalToday = await Transaction.aggregate([
             {
                 $match: {
-                    fromAccount: new mongoose.Types.ObjectId(fromAccountId),
+                    fromAccount: fromAccount._id,
                     type: 'OUT_TRANSFER',
                     createdAt: { $gte: today }
                 }
@@ -158,16 +158,16 @@ export const makeTransfer = async (req, res) => {
         const outTransfer = await Transaction.create({
             type: 'OUT_TRANSFER',
             amount,
-            fromAccount: fromAccountId,
-            toAccount: toAccountId,
+            fromAccount: fromAccount._id,
+            toAccount: toAccount._id,
             performedBy: req.usuario._id
         });
 
         const inTransfer = await Transaction.create({
             type: 'IN_TRANSFER',
             amount,
-            fromAccount: fromAccountId,
-            toAccount: toAccountId,
+            fromAccount: fromAccount._id,
+            toAccount: toAccount._id,
             performedBy: req.usuario._id
         });
 
@@ -175,31 +175,31 @@ export const makeTransfer = async (req, res) => {
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
-}
+};
 
 export const buyProduct = async (req, res) => {
     try {
-        const { productId, fromAccountId } = req.body;
+        const { productId, fromNumberAccount } = req.body;
         const user = req.usuario;
 
         const product = await Product.findById(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Producto no encontrado" });
+            return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        const fromAccount = await Account.findById(fromAccountId);
+        const fromAccount = await Account.findOne({ numberAccount: fromNumberAccount });
         if (!fromAccount) {
-            return res.status(404).json({ success: false, message: "Cuenta de origen no encontrada" });
+            return res.status(404).json({ success: false, message: "Source account not found" });
         }
 
         if (fromAccount.user.toString() !== user._id.toString()) {
-            return res.status(403).json({ success: false, message: "No tienes permiso para usar esta cuenta" });
+            return res.status(403).json({ success: false, message: "You do not have permission to use this account" });
         }
         if (product.stock <= 0) {
-            return res.status(400).json({ success: false, message: "Producto agotado" });
+            return res.status(400).json({ success: false, message: "Product out of stock" });
         }
         if (fromAccount.balance < product.price) {
-            return res.status(400).json({ success: false, message: "Fondos insuficientes" });
+            return res.status(400).json({ success: false, message: "Insufficient funds" });
         }
 
         fromAccount.balance -= product.price;
@@ -211,11 +211,11 @@ export const buyProduct = async (req, res) => {
         const transaction = await Transaction.create({
             type: 'PURCHASE',
             amount: product.price,
-            fromAccount: fromAccountId,
+            fromAccount: fromAccount._id,
             performedBy: user._id
         });
 
-        res.json({ success: true, message: "Compra realizada con éxito", transaction });
+        res.json({ success: true, message: "Purchase successful", transaction });
 
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });

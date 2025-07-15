@@ -28,7 +28,7 @@ router.put("/deposit/modify",modifyDepositAmountValidator,modifyDepositAmount);
 
 router.post("/deposit/revert",revertDepositValidator,revertDeposit);
 
-router.get("/summary/:accountId",getAccountSummaryValidator,getAccountSummary);
+router.get("/summary/:numberAccount",getAccountSummaryValidator,getAccountSummary);
 
 router.post("/transfer",makeTransferValidator,makeTransfer);
 
