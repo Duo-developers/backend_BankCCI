@@ -147,7 +147,6 @@ export const getFavoritesValidator = [
 export const removeFavoriteValidator = [
     validateJWT,
     hasRoles('USER_ROLE'),
-    // Asegura que el parámetro en la URL sea un ID de MongoDB válido.
     param('accountId', 'El ID de la cuenta en la URL es inválido').isMongoId(),
     validateField,
     handleErrors

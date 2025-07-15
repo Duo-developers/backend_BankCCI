@@ -31,7 +31,7 @@ const router = Router();
 // Rutas para Favoritos
 router.post('/me/favorites', addFavoriteValidator, addFavorite);
 router.get('/me/favorites', getFavoritesValidator, getFavorites);
-router.delete('/me/favorites/:accountNumber', removeFavoriteValidator, removeFavorite);
+router.delete('/me/favorites/:accountId', removeFavoriteValidator, removeFavorite);
 
 // Rutas para el usuario logueado
 router.get('/me/information', getUserLoggedValidator, getUserLogged);
