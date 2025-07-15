@@ -2,7 +2,6 @@ import User from './user.model.js';
 import { hash, verify } from 'argon2';
 import Account from '../account/account.model.js';
 
-
 export const createUser = async (req, res) => {
     try {
         const data = req.body;
@@ -283,10 +282,10 @@ export const getUserLogged = async (req, res) => {
 
 export const addFavorite = async (req, res) => {
     try {
-        const { accountId, alias } = req.body;
+        const { accountNumber, alias } = req.body;
         const user = req.usuario;
 
-        const accountExists = await Account.findById(accountId);
+        const accountExists = await Account.findOne({ numberAccount: accountNumber });
         if (!accountExists) {
             return res.status(404).json({ success: false, message: "La cuenta que intentas agregar no existe." });
         }
@@ -295,12 +294,12 @@ export const addFavorite = async (req, res) => {
             return res.status(400).json({ success: false, message: "No puedes agregarte a ti mismo como favorito." });
         }
 
-        const isAlreadyFavorite = user.favorites.some(fav => fav.account.toString() === accountId);
+        const isAlreadyFavorite = user.favorites.some(fav => fav.account.toString() === accountExists._id.toString());
         if (isAlreadyFavorite) {
             return res.status(400).json({ success: false, message: "Esta cuenta ya está en tus favoritos." });
         }
 
-        user.favorites.push({ account: accountId, alias: alias || accountExists.typeAccount });
+        user.favorites.push({ account: accountExists._id, alias: alias || accountExists.typeAccount });
         await user.save();
 
         res.status(200).json({ success: true, message: "Cuenta agregada a favoritos con éxito.", favorites: user.favorites });
@@ -334,10 +333,15 @@ export const getFavorites = async (req, res) => {
 
 export const removeFavorite = async (req, res) => {
     try {
-        const { accountId } = req.params; 
+        const { accountNumber } = req.params; 
         const user = req.usuario;
 
-        user.favorites = user.favorites.filter(fav => fav.account.toString() !== accountId);
+        const account = await Account.findOne({ numberAccount: accountNumber });
+        if (!account) {
+            return res.status(404).json({ success: false, message: "Cuenta no encontrada." });
+        }
+
+        user.favorites = user.favorites.filter(fav => fav.account.toString() !== account._id.toString());
         await user.save();
 
         res.status(200).json({ success: true, message: "Favorito eliminado con éxito." });
@@ -345,4 +349,3 @@ export const removeFavorite = async (req, res) => {
         res.status(500).json({ success: false, message: "Error al eliminar favorito.", error: err.message });
     }
 };
-
