@@ -358,4 +358,3 @@ export const removeFavorite = async (req, res) => {
         res.status(500).json({ success: false, message: "Error al eliminar favorito.", error: err.message });
     }
 };
-
