@@ -30,7 +30,7 @@ const router = Router();
 
 router.post('/me/favorites', addFavoriteValidator, addFavorite);
 router.get('/me/favorites', getFavoritesValidator, getFavorites);
-router.delete('/me/favorites/:accountId', removeFavoriteValidator, removeFavorite);
+router.delete('/me/favorites/:accountNumber', removeFavoriteValidator, removeFavorite);
 
 router.get('/me/information', getUserLoggedValidator, getUserLogged);
 router.put('/me', updateMeValidator, updateMe);
