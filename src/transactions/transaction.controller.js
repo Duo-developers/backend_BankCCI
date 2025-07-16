@@ -102,12 +102,12 @@ export const revertDeposit = async (req, res) => {
 
 export const getAccountSummary = async (req, res) => {
     try {
-        const { numberAccount } = req.params;
-        const account = await Account.findOne({ numberAccount });
+        const { accountId  } = req.params;
+        const account = await Account.findById(accountId);
         if (!account) return res.status(404).json({ success: false, message: "Account not found" });
 
         const transactions = await Transaction.find({
-            $or: [{ fromAccount: account._id }, { toAccount: account._id }]
+            $or: [{ fromAccount: accountId }, { toAccount: accountId }]
         }).sort({ createdAt: -1 });
 
         res.json({ success: true, balance: account.balance, transactions });
@@ -179,7 +179,7 @@ export const makeTransfer = async (req, res) => {
 
 export const buyProduct = async (req, res) => {
     try {
-        const { productId, fromNumberAccount } = req.body;
+        const { productId, fromAccountId  } = req.body;
         const user = req.usuario;
 
         const product = await Product.findById(productId);
@@ -187,7 +187,7 @@ export const buyProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        const fromAccount = await Account.findOne({ numberAccount: fromNumberAccount });
+        const fromAccount = await Account.findById(fromAccountId);
         if (!fromAccount) {
             return res.status(404).json({ success: false, message: "Source account not found" });
         }
@@ -211,7 +211,7 @@ export const buyProduct = async (req, res) => {
         const transaction = await Transaction.create({
             type: 'PURCHASE',
             amount: product.price,
-            fromAccount: fromAccount._id,
+            fromAccount: fromAccountId,
             performedBy: user._id
         });
 
@@ -219,5 +219,30 @@ export const buyProduct = async (req, res) => {
 
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+    }
+};
+
+export const getAllDeposits = async (req, res) => {
+    try {
+        const deposits = await Transaction.find({ type: 'DEPOSIT' })
+            .populate({
+                path: 'toAccount',
+                select: 'numberAccount typeAccount user',
+                populate: {
+                    path: 'user',
+                    select: 'name email'
+                }
+            })
+            .populate('performedBy', 'name username')
+            .sort({ createdAt: -1 });
+
+        if (!deposits) {
+            return res.status(404).json({ success: false, message: "No deposits found" });
+        }
+
+        res.json({ success: true, deposits });
+    } catch (err) {
+        console.error("Error fetching all deposits:", err);
+        res.status(500).json({ success: false, message: "Server error while fetching deposits", error: err.message });
     }
 };

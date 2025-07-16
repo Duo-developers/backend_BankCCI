@@ -41,7 +41,7 @@ export const revertDepositValidator = [
 export const getAccountSummaryValidator = [
     validateJWT,
     hasRoles("USER_ROLE", "ADMIN_ROLE"),
-    param("numberAccount").notEmpty().withMessage("Account number is required").isString().withMessage("Account number must be a string"),
+    param("accountId").notEmpty().withMessage("Account ID is required").isMongoId().withMessage("Invalid account ID"),
     validateField,
     handleErrors
 ];
@@ -60,7 +60,14 @@ export const buyProductValidator = [
     validateJWT,
     hasRoles("USER_ROLE"),
     body("productId", "Product ID is required").notEmpty().isMongoId(),
-    body("fromNumberAccount", "Source account number is required").notEmpty().isString(),
+    body("fromAccountId", "Source account ID is required").notEmpty().isMongoId(),
+    validateField,
+    handleErrors
+];
+
+export const getAllDepositsValidator = [
+    validateJWT,
+    hasRoles("ADMIN_ROLE"),
     validateField,
     handleErrors
 ];

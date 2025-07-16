@@ -130,7 +130,7 @@ export const updateMeValidator = [
 
 export const addFavoriteValidator = [
     validateJWT,
-    hasRoles('USER_ROLE'),
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
     body('accountNumber', 'El número de cuenta es obligatorio').notEmpty().isString(),
     body('alias', 'El alias debe ser texto').optional().isString(),
     validateField,
@@ -139,14 +139,14 @@ export const addFavoriteValidator = [
 
 export const getFavoritesValidator = [
     validateJWT,
-    hasRoles('USER_ROLE'),
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
     validateField,
     handleErrors
 ];
 
 export const removeFavoriteValidator = [
     validateJWT,
-    hasRoles('USER_ROLE'),
+    hasRoles("USER_ROLE", "ADMIN_ROLE"),
     param('accountId', 'El ID de la cuenta en la URL es inválido').isMongoId(),
     validateField,
     handleErrors
