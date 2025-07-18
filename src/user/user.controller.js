@@ -6,6 +6,14 @@ export const createUser = async (req, res) => {
     try {
         const data = req.body;
 
+        // Validate monthly income
+        if (data.monthlyIncome < 100) {
+            return res.status(400).json({
+                success: false,
+                message: 'Monthly income must be at least 100'
+            });
+        }
+
         const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             return res.status(400).json({
@@ -110,6 +118,14 @@ export const updateUser = async (req, res) => {
     try {
         const { uid } = req.params;
         const { password, dpi, ...dataN } = req.body;
+
+        // Validate monthly income if it's being updated
+        if (dataN.monthlyIncome !== undefined && dataN.monthlyIncome < 100) {
+            return res.status(400).json({
+                success: false,
+                message: 'Monthly income must be at least 100'
+            });
+        }
 
         let user = await User.findById(uid);
         if (!user || !user.status) {
@@ -216,6 +232,14 @@ export const updateMe = async (req, res) => {
     try {
         const { usuario } = req;
         const { password, dpi, email, ...dataN } = req.body;
+
+        // Validate monthly income if it's being updated
+        if (dataN.monthlyIncome !== undefined && dataN.monthlyIncome < 100) {
+            return res.status(400).json({
+                success: false,
+                message: 'Monthly income must be at least 100'
+            });
+        }
 
         const userFound = await User.findById(usuario._id);
         if (!userFound || !userFound.status) {

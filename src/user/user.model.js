@@ -63,7 +63,7 @@ const userSchema = new Schema({
     monthlyIncome: {
         type: Number,
         required: [true, 'Monthly income is required'],
-        min: [0, 'Monthly income must be a positive number']
+        min: [100, 'Monthly income must be at least 100']
     },
     favorites: {
         type: [{
