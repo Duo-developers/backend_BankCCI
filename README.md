@@ -87,5 +87,3 @@ Follow these steps to get the project running in a local environment.
     -   **Email**: `usuario@gmail.com`
     -   **Username**: `USUARIO1`
     -   **Password**: `USUARIO1`
-
-## Project Structure
